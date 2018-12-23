@@ -10,3 +10,9 @@ set :application, 'capistrano-deploy-test'
 set :repo_url, 'git@github.com:arsley/capistrano-deploy-test.git'
 set :deploy_to, '/www/capistrano-deploy-test'
 set :branch, ENV['BRANCH_NAME'] || 'master'
+
+set :migration_role, :web
+set :migration_servers, -> { primary(fetch(:migration_role)) }
+set :conditionally_migrate, true
+
+after :deploy, 'passenger:restart'

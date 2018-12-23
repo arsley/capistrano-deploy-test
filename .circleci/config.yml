@@ -29,8 +29,8 @@ jobs:
           command: yarn install --cache ~/.cache/yarn
 
       - save_cache:
-        paths:
-          - ~/.cache/yarn
+          paths:
+            - ~/.cache/yarn
           key: yarn-dependencies-{{ checksum "yarn.lock" }}
 
       # Database setup

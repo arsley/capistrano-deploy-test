@@ -1,0 +1,66 @@
+# https://circleci.com/docs/2.0/deployment-integrations/#capistrano
+
+version: 2
+jobs:
+  build:
+    docker:
+       - image: circleci/ruby:2.5.1-node-browsers
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - bundler-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - bundler-dependencies-
+
+      - run:
+          name: Install dependencies
+          command: bundle check || bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: bundler-dependencies-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: Yarn installation
+          command: yarn install --cache ~/.cache/yarn
+
+      - save_cache:
+        paths:
+          - ~/.cache/yarn
+          key: yarn-dependencies-{{ checksum "yarn.lock" }}
+
+      # Database setup
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:schema:load
+
+      - run:
+          name: Run test
+          command: bundle exec rails t
+
+  deploy:
+    docker:
+       - image: circleci/ruby:2.5.1-node-browsers
+    steps:
+      - checkout
+      - run:
+          name: Bundle install
+          command: bundle check || bundle install
+      - run:
+          name: Deploy to DigitalOcean's server from master branch
+          command: bundle exec cap production deploy
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master

@@ -1,24 +1,30 @@
-# README
+# Capistrano deploy test with Rails app
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Preparation memo
 
-Things you may want to cover:
+```
+$ ssh-add
+$ ssh -A deploy@remote 'ssh git@github.com'
 
-* Ruby version
+$ sudo mkdir /www
+$ sudo chown deploy:deploy /www
+```
 
-* System dependencies
+## Usage
 
-* Configuration
+```
+# create config/secrets.yml with credential
+$ rails secret # => this generates only credential
 
-* Database creation
+# copy credential to remote server then deploy
+$ cap production secrets_yml:setup
+$ cap production deploy
+```
 
-* Database initialization
+## Refs
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- [How To Install Ruby on Rails with rbenv on Ubuntu 16.04 | DigitalOcean](https://www.digitalocean.com/community/tutorials/how-to-install-ruby-on-rails-with-rbenv-on-ubuntu-16-04)
+- [Installing Passenger + Nginx on Ubuntu 16.04 LTS (with APT) on a Digital Ocean production server (part 2) - deployment walkthrough with Ruby, Passenger, Nginx, Ubuntu 16.04 LTS (with APT) and Digital Ocean - Passenger Library](https://www.phusionpassenger.com/library/walkthroughs/deploy/ruby/digital_ocean/nginx/oss/xenial/install_passenger.html)
+- [How to Install NVM (Node Version Manager) for Node.js on Ubuntu 12.04 LTS | Liquid Web Knowledge Base](https://www.liquidweb.com/kb/how-to-install-nvm-node-version-manager-for-node-js-on-ubuntu-12-04-lts/)
+- [Capistrano3でGithubにあるコードをデプロイ - Qiita](https://qiita.com/s-kiriki/items/08d500893c0764510e43)
+- [amazon ec2 - git authentication error in capistrano 3.2.1 - Stack Overflow](https://stackoverflow.com/questions/32904448/git-authentication-error-in-capistrano-3-2-1)

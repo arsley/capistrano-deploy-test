@@ -42,6 +42,7 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'capistrano-bundler'
   gem 'capistrano-rbenv'
+  gem 'capistrano-secrets-yml', '~> 1.1.0'
 end
 
 group :development do
